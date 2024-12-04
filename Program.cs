@@ -80,13 +80,14 @@ class Program
         }
 
     }
+
     public class Torrent
     {
-        string Title { get; set; }
-        int Seeders { get; set; }
-        int Leechers { get; set; }
-        string Size { get; set; }
-        string Date { get; set; }
+        public string Title { get; set; }
+        public int Seeders { get; set; }
+        public int Leechers { get; set; }
+        public string Size { get; set; }
+        public string Date { get; set; }
        public Torrent(string title, int seeders, int leechers, string size, string date) {
             this.Title = title;
             this.Seeders = seeders;
@@ -162,23 +163,36 @@ class Program
         int max_pages = GetMaxPages(html);
         int page = 1;
 
+
+        
+        List<List<Torrent>> torrentList = new List<List<Torrent>>();
+
         //Main loop for page indexing
+        max_pages = 2; //TESTING PURPOSES
         while (page<=max_pages) 
         {
-
+            await Task.Delay(1000);
+            Console.WriteLine(page);
+            
+            Console.WriteLine("yoyoyoy");
             var page_url = rarbgUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
             Uri page_uri = new Uri(page_url);
             response = await GetHTTP(page_uri);
             html = ParseHTTP(response);
-            GetTorrents(html);
+            Console.WriteLine(page_url);
+            var torrents = GetTorrents(html);
+            torrentList.Add(torrents);
             page++;
 
         }
-        //Automation begins here
+        List<Torrent> sortedList = torrentList.SelectMany(t => t).OrderByDescending(t => t.Seeders).ToList();
+
+        Console.WriteLine("Sorted List of Torrents by Seeders:"); 
+        for (int i = 0; i < sortedList.Count; i++) { Console.WriteLine($"{i + 1}. Name: {sortedList[i].Title}, Seeders: {sortedList[i].Seeders}, Size: {sortedList[i].Size}"); }
 
         ////title[@lang='en']
         //Find number of pages
-        
+
         //Parses the HTTP response content and turns it into nodes and shit just like BeautifulSoup in python
 
         ////
