@@ -120,15 +120,23 @@ class Program
         string url = rarbgUrl + $"search/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
         Uri uri = new Uri(url);
 
-
+        //Getting Page count
         var response = await GetHTTP(uri);
         var html = ParseHTTP(response);
         int max_pages = GetMaxPages(html);
-
-        do
+        int page = 1;
+        //Main loop for page indexing
+        while (page<max_pages) 
         {
 
-        } while (true);
+            var page_url = rarbgUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
+            Uri page_uri = new Uri(page_url);
+            response = await GetHTTP(page_uri);
+            html = ParseHTTP(response);
+
+            page++;
+
+        }
         //Automation begins here
 
         ////title[@lang='en']
