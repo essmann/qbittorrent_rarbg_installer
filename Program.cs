@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
+using System.ComponentModel.Design;
 using System.Net;
+using System.Reflection;
 using System.Text;
 class Program
 {
@@ -78,6 +80,40 @@ class Program
         }
 
     }
+    public class Torrent
+    {
+        string Title { get; set; }
+        int Seeders { get; set; }
+        int Leechers { get; set; }
+        string Size { get; set; }
+        string Date { get; set; }
+       public Torrent(string title, int seeders, int leechers, string size, string date) {
+            this.Title = title;
+            this.Seeders = seeders;
+            this.Leechers = leechers;
+            this.Size = size;
+            this.Date = date;
+        }
+    }
+    public static List<Torrent> GetTorrents(HtmlDocument html) {
+        var tableRows = html.DocumentNode.SelectNodes("//tr[@class='lista2']");
+        List<Torrent> torrents = new List<Torrent>();
+        foreach (var tr in tableRows)
+        {
+            var tds = tr.SelectNodes("./td");
+            
+            var href = tds[1].SelectSingleNode("./a").Attributes[0].Value;
+            string size = tds[4].InnerText;
+            int seeders = int.Parse(tds[5].ChildNodes[0].InnerText);
+            int leechers = int.Parse(tds[6].ChildNodes[0].InnerText);
+            string date = tds[3].InnerText;
+            var url = $"https://rargb.to{href}";
+            Torrent torrent = new Torrent(url, seeders, leechers, size, date);
+            torrents.Add(torrent);
+
+        }
+        return torrents;
+    }
     public static int GetMaxPages(HtmlDocument html) {
 
         try //If there are number of pages, unpopular movies may not have this
@@ -125,15 +161,16 @@ class Program
         var html = ParseHTTP(response);
         int max_pages = GetMaxPages(html);
         int page = 1;
+
         //Main loop for page indexing
-        while (page<max_pages) 
+        while (page<=max_pages) 
         {
 
             var page_url = rarbgUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
             Uri page_uri = new Uri(page_url);
             response = await GetHTTP(page_uri);
             html = ParseHTTP(response);
-
+            GetTorrents(html);
             page++;
 
         }
