@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HttpRequests": {
+      "commandName": "Project",
+      "commandLineArgs": "\"Harry Potter prisoner of azkaban\" -movies\r\n"
+    }
+  }
+}
