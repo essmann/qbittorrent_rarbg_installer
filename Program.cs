@@ -3,6 +3,7 @@ using System.ComponentModel.Design;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 class Program
 {
     static readonly HttpClient client = new HttpClient();
@@ -88,32 +89,53 @@ class Program
         public int Leechers { get; set; }
         public string Size { get; set; }
         public string Date { get; set; }
-       public Torrent(string title, int seeders, int leechers, string size, string date) {
+        public string Href { get; set; }
+       public Torrent(string title, int seeders, int leechers, string size, string date, string href) {
             this.Title = title;
             this.Seeders = seeders;
             this.Leechers = leechers;
             this.Size = size;
             this.Date = date;
+            this.Href = href;
         }
     }
-    public static List<Torrent> GetTorrents(HtmlDocument html) {
-        var tableRows = html.DocumentNode.SelectNodes("//tr[@class='lista2']");
-        List<Torrent> torrents = new List<Torrent>();
-        foreach (var tr in tableRows)
-        {
-            var tds = tr.SelectNodes("./td");
-            
-            var href = tds[1].SelectSingleNode("./a").Attributes[0].Value;
-            string size = tds[4].InnerText;
-            int seeders = int.Parse(tds[5].ChildNodes[0].InnerText);
-            int leechers = int.Parse(tds[6].ChildNodes[0].InnerText);
-            string date = tds[3].InnerText;
-            var url = $"https://rargb.to{href}";
-            Torrent torrent = new Torrent(url, seeders, leechers, size, date);
-            torrents.Add(torrent);
+    public static string ShortenURL(string href) {
 
+        string pattern = @"^/torrent/|\.html$";
+        string result = Regex.Replace(href, pattern, "");
+        return result;
+
+
+    }
+    public void FilterByQuality() { }
+    public static List<Torrent> GetTorrents(HtmlDocument html) {
+        try
+        {
+            var tableRows = html.DocumentNode.SelectNodes("//tr[@class='lista2']");
+
+
+            List<Torrent> torrents = new List<Torrent>();
+            foreach (var tr in tableRows)
+            {
+                var tds = tr.SelectNodes("./td");
+
+                var href = tds[1].SelectSingleNode("./a").Attributes[0].Value;
+                var shortenedHref =  ShortenURL(href);
+                string size = tds[4].InnerText;
+                int seeders = int.Parse(tds[5].ChildNodes[0].InnerText);
+                int leechers = int.Parse(tds[6].ChildNodes[0].InnerText);
+                string date = tds[3].InnerText;
+                var url = $"https://rargb.to{href}";
+                Torrent torrent = new Torrent(url, seeders, leechers, size, date, shortenedHref);
+                torrents.Add(torrent);
+
+            }
+            return torrents;
         }
-        return torrents;
+        catch
+        {
+            throw new Exception("Torrents HTML not found. Invalid URL or no Torrents for this URL.");
+        }
     }
     public static int GetMaxPages(HtmlDocument html) {
 
@@ -155,6 +177,7 @@ class Program
         //Creating initial URL
         string rarbgUrl = "https://rargb.to/";
         string url = rarbgUrl + $"search/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
+        if (category == "all") { url = url.Split("&category[]")[0]; }
         Uri uri = new Uri(url);
 
         //Getting Page count
@@ -172,10 +195,9 @@ class Program
         while (page<=max_pages) 
         {
             await Task.Delay(1000);
-            Console.WriteLine(page);
-            
-            Console.WriteLine("yoyoyoy");
+           
             var page_url = rarbgUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
+            if (category == "all") { page_url = page_url.Split("&category[]")[0]; }
             Uri page_uri = new Uri(page_url);
             response = await GetHTTP(page_uri);
             html = ParseHTTP(response);
@@ -187,16 +209,13 @@ class Program
         }
         List<Torrent> sortedList = torrentList.SelectMany(t => t).OrderByDescending(t => t.Seeders).ToList();
 
-        Console.WriteLine("Sorted List of Torrents by Seeders:"); 
-        for (int i = 0; i < sortedList.Count; i++) { Console.WriteLine($"{i + 1}. Name: {sortedList[i].Title}, Seeders: {sortedList[i].Seeders}, Size: {sortedList[i].Size}"); }
+        Console.WriteLine("Sorted List of Torrents by Seeders:");
+        for(int i = 0; i<sortedList.Count; i++)
+        {
+            Console.WriteLine($"[{i}] | {sortedList[i].Href} | {sortedList[i].Seeders} | {DateTime.Parse( sortedList[i].Date).Year} ");
+            Console.WriteLine("--------------------------------------------------------------");
+        }
 
-        ////title[@lang='en']
-        //Find number of pages
-
-        //Parses the HTTP response content and turns it into nodes and shit just like BeautifulSoup in python
-
-        ////
-        ///
 
 
 
