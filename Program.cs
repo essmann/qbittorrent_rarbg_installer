@@ -195,13 +195,17 @@ class Program
         while (page<=max_pages) 
         {
             await Task.Delay(1000);
-           
+
+            //Get URL
             var page_url = rarbgUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
             if (category == "all") { page_url = page_url.Split("&category[]")[0]; }
             Uri page_uri = new Uri(page_url);
+            //Parse
             response = await GetHTTP(page_uri);
             html = ParseHTTP(response);
+            
             Console.WriteLine(page_url);
+            //Gets all Torrents from each site
             var torrents = GetTorrents(html);
             torrentList.Add(torrents);
             page++;
@@ -209,6 +213,7 @@ class Program
         }
         List<Torrent> sortedList = torrentList.SelectMany(t => t).OrderByDescending(t => t.Seeders).ToList();
 
+        //Display torrents
         Console.WriteLine("Sorted List of Torrents by Seeders:");
         for(int i = 0; i<sortedList.Count; i++)
         {
