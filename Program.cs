@@ -14,7 +14,7 @@ using HttpRequests;
 
 class Program
 {
-    static readonly HttpClient client = new HttpClient();
+   
 
     
     public static void InitializeConfig()
@@ -32,33 +32,7 @@ class Program
         }
     }
 
-    public static async Task<string> GetHTTP(Uri uri)
-    {
-        try
-        {
-            client.DefaultRequestHeaders.Add("User-Agent", Config.UserAgent);
-            using HttpResponseMessage response = await client.GetAsync(uri);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
-        catch (HttpRequestException e)
-        {
-            Console.WriteLine($"Request error: {e.Message}");
-            return "";
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"An error occurred: {e.Message}");
-            return "";
-        }
-    }
-
-    public static HtmlDocument ParseHTTP(string response)
-    {
-        var htmlDoc = new HtmlDocument();
-        htmlDoc.LoadHtml(response);
-        return htmlDoc;
-    }
+   
 
     public class Torrent
     {
@@ -126,8 +100,8 @@ class Program
     {
         string url = torrent.Title;
         Uri uri = new Uri(url);
-        var response = await GetHTTP(uri);
-        var html = ParseHTTP(response);
+        var response = await HttpHelper.GetHTTP(uri);
+        var html = HttpHelper.ParseHTTP(response);
         var td = html.DocumentNode.SelectSingleNode("//td[@class='lista']");
         var anchors = td.SelectNodes("./a");
         return anchors[0].Attributes[2].Value;
@@ -153,8 +127,8 @@ class Program
     {
         string url = QueryURL;
         Uri uri = new Uri(url);
-        var response = await GetHTTP(uri);
-        var html = ParseHTTP(response);
+        var response = await HttpHelper.GetHTTP(uri);
+        var html = HttpHelper.ParseHTTP(response);
 
         try
         {
@@ -191,8 +165,8 @@ class Program
 
     public static async Task<List<Torrent>> ProcessPage(string QueryURL)
     {
-        string response = await GetHTTP(new Uri(QueryURL));
-        HtmlDocument html = ParseHTTP(response);
+        string response = await HttpHelper.GetHTTP(new Uri(QueryURL));
+        HtmlDocument html = HttpHelper.ParseHTTP(response);
         return GetTorrents(html);
     }
 
