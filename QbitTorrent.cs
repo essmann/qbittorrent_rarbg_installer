@@ -35,7 +35,7 @@ namespace HttpRequests
             {
                 
                 // Read all text from the file (ensure file contains only the IP address)
-                string ipAddress = File.ReadAllText(filePath).Trim();
+                string ipAddress = File.ReadAllText(fullPath).Trim();
 
                 // If the IP is valid, set it to qbittorrentUrl
                 if (Uri.IsWellFormedUriString(ipAddress, UriKind.Absolute))
