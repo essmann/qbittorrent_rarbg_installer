@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace HttpRequests
 {
+    
     public  class QbitTorrent
     {
+        
         private static readonly HttpClient client = new HttpClient();
         public static string qbittorrentUrl = "http://10.0.0.7:8080";
-        public static string username = "essmann";
-        public static string password = "123456";
+        public static string username = Environment.GetEnvironmentVariable("qbtusername");
+        public static string password = Environment.GetEnvironmentVariable("qbtpassword");
+
         private static bool isAuthenticated = false;
 
         public static async Task Authenticate()
@@ -59,5 +62,9 @@ namespace HttpRequests
             }
         
     }
+        public static async Task RemoveTorrent(string magnetUri)
+        {
+
+        }
     }
 }

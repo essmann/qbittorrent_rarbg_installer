@@ -257,12 +257,13 @@ class Program
                 int index = int.Parse(input);
                 Torrent SelectedTorrent = sortedList[index];
                 Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
-                var test = await GetMagnetUri(SelectedTorrent);
-                 QbitTorrent.AddTorrent(test);
+                var magnet = await GetMagnetUri(SelectedTorrent);
+                await QbitTorrent.AddTorrent(magnet);
             }
             catch (IndexOutOfRangeException)
             {
-
+                Console.WriteLine("Index does not exist.");
+                continue;
             }
             catch {
 
