@@ -15,6 +15,22 @@ class Program
         public static int MaxPages = 2;
         public static int MaxDisplay = 15;
     }
+    public static void InitializeConfig()
+    {
+        string cwd = Directory.GetCurrentDirectory();
+        string fileName = "config.txt";
+        string filePath = Path.Combine(cwd, fileName);
+
+        if (!File.Exists(filePath))
+        {
+            File.Create(filePath).Close();
+            Console.WriteLine($"Config.txt file created at {cwd}");
+        }
+        else
+        {
+                //Pass for now
+        }
+    }
     public static async Task<string> GetHTTP(Uri uri)
     {
         try
