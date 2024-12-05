@@ -16,16 +16,23 @@ public static class Config
 
     public static void InitializeConfig()
     {
-        string cwd = Directory.GetCurrentDirectory();
-        string projectDirectory = Directory.GetParent(cwd).Parent.Parent.FullName;
-        string fileName = "config.txt";
-        string filePath = Path.Combine(projectDirectory, fileName);
-
-        if (!File.Exists(filePath))
+        try
         {
-            File.Create(filePath).Close();
-            Config.SaveToFile(filePath);
-            Console.WriteLine($"Config.txt file created at {cwd}");
+            string cwd = Directory.GetCurrentDirectory();
+            string projectDirectory = Directory.GetParent(cwd).Parent.Parent.FullName;
+            string fileName = "config.txt";
+            string filePath = Path.Combine(projectDirectory, fileName);
+
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+                Config.SaveToFile(filePath);
+                Console.WriteLine($"Config.txt file created at {cwd}");
+            }
+        }
+        catch
+        {
+
         }
     }
     public static void SaveToFile(string filePath)

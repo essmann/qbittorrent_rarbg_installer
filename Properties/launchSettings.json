@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HttpRequests": {
+      "commandName": "Project",
+      "commandLineArgs": "\"harry potter\" -tv -movies"
+    }
+  }
+}
