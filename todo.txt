@@ -1,5 +1,0 @@
-IMPROVEMENTS TO CODE
-
-
-1) get command line library to better parse commands 
-
