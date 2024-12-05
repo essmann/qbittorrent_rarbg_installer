@@ -297,6 +297,7 @@ class Program
 
         while (true)
         {
+            Console.WriteLine("Select a Torrent: ");
             string? input = Console.ReadLine();
             if(input == "quit") { break; }
 
@@ -308,6 +309,7 @@ class Program
                 Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
                 var magnet = await GetMagnetUri(SelectedTorrent);
                 await QbitTorrent.AddTorrent(magnet);
+                break;
             }
             catch (IndexOutOfRangeException)
             {
