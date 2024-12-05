@@ -62,9 +62,6 @@ namespace HttpRequests
             }
         
     }
-        public static async Task RemoveTorrent(string magnetUri)
-        {
-
-        }
+       
     }
 }
