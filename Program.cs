@@ -211,16 +211,8 @@ class Program
         {
             await Task.Delay(1000);
 
-            //Get URL
             var page_url = BuildPageUrl(page, search, category);
-            Uri page_uri = new Uri(page_url);
-            //Parse
-            var response = await GetHTTP(page_uri);
-            var html = ParseHTTP(response);
-            
-            Console.WriteLine(page_url);
-            //Gets all Torrents from each site
-            var torrents = GetTorrents(html);
+            var torrents = await ProcessPage(page, search, category);
             torrentList.Add(torrents);
             page++;
 
