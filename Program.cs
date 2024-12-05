@@ -12,6 +12,7 @@ class Program
         public const string BaseUrl = "https://rargb.to/";
         public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
         public static int MaxPages = 2;
+        public static int MaxDisplay = 15;
     }
     public static async Task<string> GetHTTP(Uri uri)
     {
@@ -143,6 +144,17 @@ class Program
             throw new Exception("Torrents HTML not found. Invalid URL or no Torrents for this URL.");
         }
     }
+    public static void DisplayTorrents(int MaxPages, List<Torrent> sortedList) {
+        //Display torrents
+        Console.WriteLine("Sorted List of Torrents by Seeders:");
+        if(sortedList.Count < MaxPages) { MaxPages = sortedList.Count; }
+        for (int i = 0; i < MaxPages; i++)
+        {
+            Console.WriteLine($"[{i}] | {sortedList[i].Href} | {sortedList[i].Seeders} | {DateTime.Parse(sortedList[i].Date).Year} ");
+            Console.WriteLine("--------------------------------------------------------------");
+        }
+
+    }
     public static async Task<int> GetMaxPages(string search, string category) {
 
         string url = Config.BaseUrl + $"search/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
@@ -219,15 +231,14 @@ class Program
         }
         List<Torrent> sortedList = torrentList.SelectMany(t => t).OrderByDescending(t => t.Seeders).ToList();
 
-        //Display torrents
-        Console.WriteLine("Sorted List of Torrents by Seeders:");
-        for(int i = 0; i<sortedList.Count; i++)
+        DisplayTorrents(Config.MaxDisplay, sortedList); //-> prints all torrents
+
+        while (true)
         {
-            Console.WriteLine($"[{i}] | {sortedList[i].Href} | {sortedList[i].Seeders} | {DateTime.Parse( sortedList[i].Date).Year} ");
-            Console.WriteLine("--------------------------------------------------------------");
+            string? input = Console.ReadLine();
+
+
         }
-
-
 
 
     }
