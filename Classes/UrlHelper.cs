@@ -18,7 +18,6 @@ namespace HttpRequests
                 string categoryString = $"&category[]={Uri.EscapeDataString(category)}";
                 url += categoryString;
             }
-            Console.WriteLine(url);
             return url;
             //var url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
         }
@@ -26,6 +25,53 @@ namespace HttpRequests
         {
             string pattern = @"^/torrent/|\.html$";
             return Regex.Replace(href, pattern, "");
+        }
+        public static void GetUrlInfo(Torrent torrent)
+        {
+            string pattern = @"(?<resolution>\d{3,4}p)(?=-|_|$)|(?<codec>x265|x264|HEVC|DD\+)|(?<audio>5\.1|7\.1|Stereo)|(?<bluray>BluRay)|(?<extended>Extended|Unrated|Director's\sCut)|(?<rip>WEB-DL|WEBRip|BluRay|BDRip|CamRip)";
+
+
+
+            MatchCollection matches = Regex.Matches(torrent.Title, pattern, RegexOptions.IgnoreCase);
+
+            // Process matches
+            foreach (Match match in matches)
+            {
+                if (match.Groups["resolution"].Success && string.IsNullOrEmpty(torrent.Res))
+                {
+                    Console.WriteLine($"Resolution: {match.Groups["resolution"].Value}");
+                    torrent.Res = match.Groups["resolution"].Value;
+                }
+
+                if (match.Groups["codec"].Success && string.IsNullOrEmpty(torrent.Codec))
+                {
+                    Console.WriteLine($"Codec: {match.Groups["codec"].Value}");
+                    torrent.Codec = match.Groups["codec"].Value;
+                }
+
+                if (match.Groups["audio"].Success && string.IsNullOrEmpty(torrent.Audio))
+                {
+                    Console.WriteLine($"Audio: {match.Groups["audio"].Value}");
+                    torrent.Audio = match.Groups["audio"].Value;
+                }
+
+                if (match.Groups["bluray"].Success && string.IsNullOrEmpty(torrent.Bluray))
+                {
+                    Console.WriteLine($"Bluray: {match.Groups["bluray"].Value}");
+                    torrent.Bluray = match.Groups["bluray"].Value;
+                }
+
+                if (match.Groups["rip"].Success && string.IsNullOrEmpty(torrent.Rip))
+                {
+                    torrent.Rip = match.Groups["rip"].Value;
+                }
+
+                if (match.Groups["extended"].Success && string.IsNullOrEmpty(torrent.Extended))
+                {
+                    Console.WriteLine($"Version: {match.Groups["extended"].Value}");
+                    torrent.Extended = match.Groups["extended"].Value;
+                }
+            }
         }
 
     }

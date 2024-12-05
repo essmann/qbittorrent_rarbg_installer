@@ -76,10 +76,14 @@ class Program
                     torrentList.Add(torrents);
                     page++;
                 }
-
+                
                 var allTorrents = torrentList.SelectMany(x => x).ToList();
                 var sortedList =
                 allTorrents.OrderByDescending(x => x.Seeders).ToList();
+                foreach (var torrent in sortedList)
+                {
+                    UrlHelper.GetUrlInfo(torrent);
+                }
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
                 while (true)
                 {

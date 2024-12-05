@@ -14,7 +14,13 @@ namespace HttpRequests
         public string Size { get; set; }
         public string Date { get; set; }
         public string Href { get; set; }
+        public string Res { get; set; }
+        public string Codec { get; set; }
+        public string Rip { get; set; }
 
+        public string Bluray { get; set; }
+        public string Audio { get; set; }
+        public string Extended { get; set; }
         public Torrent(
             string title,
             int seeders,

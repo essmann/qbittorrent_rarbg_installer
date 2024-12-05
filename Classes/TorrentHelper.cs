@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,17 +53,35 @@ namespace HttpRequests
         public static void DisplayTorrents(int MaxPages, List<Torrent> sortedList)
         {
             Console.WriteLine("Sorted List of Torrents by Seeders:");
+
+            // Set fixed column widths for index, seeders, URL, and details
+            int indexWidth = 5;
+            int seedersWidth = 10;
+            int urlColumnWidth = 50;  // For the URL column
+            int detailsColumnWidth = 40; // For the Details column (adjustable)
+
+            // Print headers with adjusted spacing
+            Console.WriteLine("{0,-" + indexWidth + "} | {1,-" + seedersWidth + "} | {2,-" + urlColumnWidth + "} | {3,-" + detailsColumnWidth + "}",
+                "Index", "Seeders", "Torrent URL", "Details");
+
             if (sortedList.Count < MaxPages)
             {
                 MaxPages = sortedList.Count;
             }
+
             for (int i = 0; i < MaxPages; i++)
             {
-                Console.WriteLine(
-                    $"[{i}] | {sortedList[i].Href} | {sortedList[i].Seeders} | {DateTime.Parse(sortedList[i].Date).Year}"
-                );
-                Console.WriteLine("--------------------------------------------------------------");
+                // Limit URL length if necessary
+                string truncatedUrl = sortedList[i].Href.Length > urlColumnWidth ? sortedList[i].Href.Substring(0, urlColumnWidth - 3) + "..." : sortedList[i].Href;
+
+                // Construct the details part with resolution, rip, and codec
+                string details = $"Resolution: {sortedList[i].Res ?? "N/A"}, Rip: {sortedList[i].Rip ?? "N/A"}, Codec: {sortedList[i].Codec ?? "N/A"}";
+
+                // Display the index, seeders, URL, and details with proper formatting
+                Console.WriteLine("{0,-" + indexWidth + "} | {1,-" + seedersWidth + "} | {2,-" + urlColumnWidth + "} | {3,-" + detailsColumnWidth + "}",
+                    i, sortedList[i].Seeders, truncatedUrl, details);
             }
         }
+
     }
 }
