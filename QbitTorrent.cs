@@ -8,33 +8,37 @@ namespace HttpRequests
 {
     public  class QbitTorrent
     {
+        private static readonly HttpClient client = new HttpClient();
         public static string qbittorrentUrl = "http://10.0.0.7:8080";
         public static string username = "essmann";
         public static string password = "123456";
+        private static bool isAuthenticated = false;
 
+        public static async Task Authenticate()
+        {
+            if (isAuthenticated) return;
+
+            var authContent = new FormUrlEncodedContent(new[]
+            {
+            new KeyValuePair<string, string>("username", username),
+            new KeyValuePair<string, string>("password", password)
+        });
+
+            var authResponse = await client.PostAsync($"{qbittorrentUrl}/api/v2/auth/login", authContent);
+            if (!authResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to authenticate with qBittorrent.");
+            }
+
+            Console.WriteLine("Authenticated with qBittorrent.");
+            isAuthenticated = true;
+        }
         public static async Task AddTorrent(string magnetUri)
         {
             try
             {
-                using HttpClient client = new HttpClient();
+                await Authenticate(); // Authenticate only if needed
 
-                // Step 1: Authenticate
-                var authContent = new FormUrlEncodedContent(new[]
-                {
-                new KeyValuePair<string, string>("username", username),
-                new KeyValuePair<string, string>("password", password)
-            });
-
-                var authResponse = await client.PostAsync($"{qbittorrentUrl}/api/v2/auth/login", authContent);
-                if (!authResponse.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Failed to authenticate with qBittorrent.");
-                    return;
-                }
-
-                Console.WriteLine("Authenticated with qBittorrent.");
-
-                // Step 2: Add Magnet URI
                 var addContent = new FormUrlEncodedContent(new[]
                 {
                 new KeyValuePair<string, string>("urls", magnetUri)
@@ -53,6 +57,7 @@ namespace HttpRequests
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        }
+        
+    }
     }
 }
