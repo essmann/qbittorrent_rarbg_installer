@@ -26,40 +26,7 @@ class Program
    
     
 
-    public static async Task<int> GetMaxPages(string QueryURL)
-    {
-        string url = QueryURL;
-        Uri uri = new Uri(url);
-        var response = await HttpHelper.GetHTTP(uri);
-        var html = HttpHelper.ParseHTTP(response);
-
-        try
-        {
-            var pagerDiv = html.DocumentNode.SelectSingleNode("//div[@id='pager_links']");
-            if (pagerDiv == null)
-                return 1;
-
-            var anchorTags = pagerDiv.SelectNodes("./a");
-            if (anchorTags == null || anchorTags.Count == 0)
-                return 1;
-            var lastElement = anchorTags.Last();
-            return lastElement.InnerText == ">>"
-              ? int.Parse(anchorTags[anchorTags.Count - 2].InnerText)
-              : int.Parse(lastElement.InnerText);
-        }
-        catch
-        {
-            return 1;
-        }
-    }
-  
-
-    public static async Task<List<Torrent>> ProcessPage(string QueryURL)
-    {
-        string response = await HttpHelper.GetHTTP(new Uri(QueryURL));
-        HtmlDocument html = HttpHelper.ParseHTTP(response);
-        return TorrentHelper.GetTorrents(html);
-    }
+    
 
     public static async Task<int> Main(string[] args)
     {
@@ -111,7 +78,7 @@ class Program
                 }
                 var url = UrlHelper.BuildQueryUrl(name, categories);
 
-                int max_pages = await GetMaxPages(url);
+                int max_pages = await PageHelper.GetMaxPages(url);
                 int page = 1;
 
                 List<List<Torrent>> torrentList = new List<List<Torrent>>();
@@ -122,7 +89,7 @@ class Program
                     await Task.Delay(1000);
 
                     var page_url = (page == 1) ? url : UrlHelper.BuildQueryUrl(name, categories, page);
-                    var torrents = await ProcessPage(page_url);
+                    var torrents = await PageHelper.ProcessPage(page_url);
 
                     torrentList.Add(torrents);
                     page++;
