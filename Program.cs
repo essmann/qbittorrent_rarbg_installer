@@ -4,6 +4,9 @@ using System.ComponentModel.Design;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 class Program
 {
@@ -14,16 +17,42 @@ class Program
         public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
         public static int MaxPages = 2;
         public static int MaxDisplay = 15;
+
+        public static void SaveToFile(string filePath)
+        {
+            var configData = new
+            {
+                BaseUrl,
+                UserAgent,
+                MaxPages,
+                MaxDisplay
+            };
+
+            string jsonString = JsonSerializer.Serialize(configData, new JsonSerializerOptions { WriteIndented = true });
+
+            // Ensure proper file access
+            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new StreamWriter(fileStream))
+            {
+                writer.Write(jsonString);
+            }
+            Console.WriteLine($"Configuration saved to {filePath}");
+        }
     }
     public static void InitializeConfig()
     {
         string cwd = Directory.GetCurrentDirectory();
+        string projectDirectory = Directory.GetParent(cwd).Parent.Parent.FullName;
+        
         string fileName = "config.txt";
-        string filePath = Path.Combine(cwd, fileName);
+        string filePath = Path.Combine(projectDirectory, fileName);
 
         if (!File.Exists(filePath))
         {
             File.Create(filePath).Close();
+            Config.SaveToFile(filePath);
+                
+                //.Close();
             Console.WriteLine($"Config.txt file created at {cwd}");
         }
         else
@@ -236,7 +265,7 @@ class Program
     }
     public static async Task Main(string[] args)
     {
-        
+        InitializeConfig();
         Dictionary<string, string> searchParams =  GetArgumentsCLI(args);
         string search = searchParams["search"];
         string category = searchParams["category"];
