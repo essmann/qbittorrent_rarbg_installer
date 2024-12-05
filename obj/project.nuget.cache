@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wqgA8o2txKY=",
+  "dgSpecHash": "wBR0E930rxA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj",
+  "projectFilePath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Essmann\\.nuget\\packages\\htmlagilitypack\\1.11.71\\htmlagilitypack.1.11.71.nupkg.sha512",
     "C:\\Users\\Essmann\\.nuget\\packages\\microsoft.csharp\\4.4.1\\microsoft.csharp.4.4.1.nupkg.sha512",

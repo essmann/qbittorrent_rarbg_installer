@@ -38,6 +38,7 @@ class Program
         rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool, int>(
             async (name, tv, movies, games, music, max_pages_arg) => {
                 Config.InitializeConfig();
+                
 
                 List<string> categories = new List<string>();
                 if (tv)

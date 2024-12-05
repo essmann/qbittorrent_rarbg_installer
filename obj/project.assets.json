@@ -273,11 +273,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj",
+      "projectUniqueName": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj",
       "projectName": "HttpRequests",
-      "projectPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj",
+      "projectPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj",
       "packagesPath": "C:\\Users\\Essmann\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\obj\\",
+      "outputPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -308,7 +308,7 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "all"
+        "auditMode": "direct"
       },
       "SdkAnalysisLevel": "9.0.100"
     },

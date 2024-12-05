@@ -1,7 +1,10 @@
-﻿using System;
+﻿using HttpRequests.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace HttpRequests
@@ -11,61 +14,77 @@ namespace HttpRequests
     {
         
         private static readonly HttpClient client = new HttpClient();
-        public static string qbittorrentUrl = "http://10.0.0.7:8080";
+        public static string qbittorrentUrl = "http://0.0.0.0:8080";
         
-        public static string username = Environment.GetEnvironmentVariable("qbtusername");
-        public static string password = Environment.GetEnvironmentVariable("qbtpassword");
+        public static string? Username { get; set; }
+        public static string? Password { get; set; }
 
         private static bool isAuthenticated = false;
-        private static bool IPhasbeenRead = false;
-        public static void SetQbittorrentUrlFromFile()
+       
+        private static bool EnvironmentVarChecked = false;
+
+        public static void CheckAndSetEnvironmentVariables()
         {
             // Get the path from the environment variable
             string? basePath = Environment.GetEnvironmentVariable("rarbg_cli_path");
-            string filePath = "server_url.txt";
+            string? filePath = "config.json";
             if (string.IsNullOrEmpty(basePath))
             {
                 Console.WriteLine("Environment variable 'rarbg_cli_path' is not set.");
                 return;
             }
-
-            // Combine the base path (from environment variable) with the file path
             string fullPath = Path.Combine(basePath, filePath);
-            try
+            string? username = Environment.GetEnvironmentVariable("qbtusername");
+            string? password = Environment.GetEnvironmentVariable("qbtpassword");
+            // If necessary, create it.
+            if (username == null || password == null)
             {
-                
-                // Read all text from the file (ensure file contains only the IP address)
-                string ipAddress = File.ReadAllText(fullPath).Trim();
+                // Read JSON from a file
+                try {
+                    string json = File.ReadAllText(fullPath);
 
-                // If the IP is valid, set it to qbittorrentUrl
-                if (Uri.IsWellFormedUriString(ipAddress, UriKind.Absolute))
-                {
-                    qbittorrentUrl = ipAddress;
-                    Console.WriteLine($"qbittorrentUrl set to: {qbittorrentUrl}");
+                    // Deserialize into the Config object
+                    JSONconfig? config = JsonSerializer.Deserialize<JSONconfig>(json);
+                    //set variables
+                    if((config.Password == null || config.Username == null))
+                    {
+                        throw new Exception($"Username or Password has not been set in {fullPath}");
+                    }
+                    // If the IP is valid, set it to qbittorrentUrl
+                    if (Uri.IsWellFormedUriString(config.IPAddress, UriKind.Absolute))
+                    {
+                        qbittorrentUrl = config.IPAddress;
+                        Console.WriteLine($"qbittorrentUrl set to: {qbittorrentUrl}");
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid IP address in file.");
+                    }
+                    Username = config.Username;
+                    Password = config.Password;
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Invalid IP address in file.");
+                    Console.WriteLine($"Error reading file: {ex.Message}");
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error reading file: {ex.Message}");
             }
         }
+        
+        
         public static async Task Authenticate()
         {
-            if (!IPhasbeenRead)
+            if (!EnvironmentVarChecked)
             {
-                SetQbittorrentUrlFromFile();
-                IPhasbeenRead = true;
+                CheckAndSetEnvironmentVariables();
+                 EnvironmentVarChecked = true;
             }
+           
             if (isAuthenticated) return;
 
             var authContent = new FormUrlEncodedContent(new[]
             {
-            new KeyValuePair<string, string>("username", username),
-            new KeyValuePair<string, string>("password", password)
+            new KeyValuePair<string, string>("username", Username),
+            new KeyValuePair<string, string>("password", Password)
         });
 
             var authResponse = await client.PostAsync($"{qbittorrentUrl}/api/v2/auth/login", authContent);
