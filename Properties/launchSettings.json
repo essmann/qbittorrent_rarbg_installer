@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "HttpRequests": {
-      "commandName": "Project",
-      "commandLineArgs": "\"Harold and maude\" -movies\r\n"
-    }
-  }
-}

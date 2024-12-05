@@ -133,7 +133,7 @@ class Program
 
         catch
         {
-            throw new Exception(); //temporary
+            throw new Exception("No arguments inputted"); //temporary
         }
 
     }

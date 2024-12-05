@@ -12,6 +12,10 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 	<PropertyGroup>
 		<NoWarn>8602;8604;8601;8603</NoWarn>
 		<!-- Add specific warning codes you want to ignore -->
