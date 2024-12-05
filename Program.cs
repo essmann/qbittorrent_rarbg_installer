@@ -144,6 +144,18 @@ class Program
             throw new Exception("Torrents HTML not found. Invalid URL or no Torrents for this URL.");
         }
     }
+    public static async Task<string> GetMagnetUri(Torrent torrent)
+    {
+        string url = torrent.Title;
+        Uri uri = new Uri(url);
+        var response = await GetHTTP(uri);
+        var html = ParseHTTP(response);
+
+        var td = html.DocumentNode.SelectSingleNode("//td[@class='lista']");
+        var anchors = td.SelectNodes("./a");
+        var magnet = anchors[0].Attributes[2].Value;
+        return magnet;
+    }
     public static void DisplayTorrents(int MaxPages, List<Torrent> sortedList) {
         //Display torrents
         Console.WriteLine("Sorted List of Torrents by Seeders:");
@@ -244,6 +256,7 @@ class Program
                 int index = int.Parse(input);
                 Torrent SelectedTorrent = sortedList[index];
                 Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
+                var test = GetMagnetUri(SelectedTorrent);
             }
             catch (IndexOutOfRangeException)
             {
