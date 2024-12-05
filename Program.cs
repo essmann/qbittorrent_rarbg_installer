@@ -1,16 +1,21 @@
 ﻿using HtmlAgilityPack;
-using HttpRequests;
-using System.ComponentModel.Design;
-using System.Net;
-using System.Reflection;
-using System.Text;
+using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.ComponentModel;
+using HttpRequests;
+
 class Program
 {
     static readonly HttpClient client = new HttpClient();
+
     public static class Config
     {
         public const string BaseUrl = "https://rargb.to/";
@@ -30,7 +35,6 @@ class Program
 
             string jsonString = JsonSerializer.Serialize(configData, new JsonSerializerOptions { WriteIndented = true });
 
-            // Ensure proper file access
             using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             using (var writer = new StreamWriter(fileStream))
             {
@@ -38,15 +42,12 @@ class Program
             }
             Console.WriteLine($"Configuration saved to {filePath}");
         }
-        
-       
-
     }
+
     public static void InitializeConfig()
     {
         string cwd = Directory.GetCurrentDirectory();
         string projectDirectory = Directory.GetParent(cwd).Parent.Parent.FullName;
-        
         string fileName = "config.txt";
         string filePath = Path.Combine(projectDirectory, fileName);
 
@@ -54,89 +55,39 @@ class Program
         {
             File.Create(filePath).Close();
             Config.SaveToFile(filePath);
-                
-                //.Close();
             Console.WriteLine($"Config.txt file created at {cwd}");
         }
-        else
-        {
-                //Pass for now
-        }
     }
+
     public static async Task<string> GetHTTP(Uri uri)
     {
         try
         {
             client.DefaultRequestHeaders.Add("User-Agent", Config.UserAgent);
-
-            // Send a GET request asynchronously
             using HttpResponseMessage response = await client.GetAsync(uri);
-
-            // Ensure the request was successful (Status Code 200-299)
             response.EnsureSuccessStatusCode();
-
-            // Read the content of the response as a string asynchronously
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            return responseBody;
+            return await response.Content.ReadAsStringAsync();
         }
         catch (HttpRequestException e)
         {
-            // Handle specific HttpRequestException errors
             Console.WriteLine($"Request error: {e.Message}");
             return "";
         }
         catch (Exception e)
         {
-            // Handle other exceptions (e.g., network issues)
             Console.WriteLine($"An error occurred: {e.Message}");
             return "";
         }
-    
+    }
 
-}
     public static HtmlDocument ParseHTTP(string response)
     {
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(response);
         return htmlDoc;
-
     }
-    public static Dictionary<string, string> GetArgumentsCLI(string[] args)
-    {
-        Dictionary<string, string> searchParams = new Dictionary<string, string>();
-       
-        try
-        {
-            if (args.Length == 0) { throw new Exception("No arguments inputted"); }
-            searchParams["search"] = args[0]; 
-            foreach (var arg in args)
-            {
-                if (arg.StartsWith("-"))
-                {
-                    if ( arg == "-tv"){
-                        searchParams["category"] = arg.Replace("-", "");
-                    }
-                    else if(arg == "-all")
-                    {
-                        searchParams["category"] = arg.Replace("-", "");
-                    }
-                    else if(arg == "-movies")
-                    {
-                        searchParams["category"] = arg.Replace("-", "");
-                    }
-                }
 
-            }
-            return searchParams;
-        }
-
-        catch
-        {
-            throw new Exception("No arguments inputted"); //temporary
-        }
-
-    }
+    
 
     public class Torrent
     {
@@ -146,46 +97,42 @@ class Program
         public string Size { get; set; }
         public string Date { get; set; }
         public string Href { get; set; }
-       public Torrent(string title, int seeders, int leechers, string size, string date, string href) {
-            this.Title = title;
-            this.Seeders = seeders;
-            this.Leechers = leechers;
-            this.Size = size;
-            this.Date = date;
-            this.Href = href;
+
+        public Torrent(string title, int seeders, int leechers, string size, string date, string href)
+        {
+            Title = title;
+            Seeders = seeders;
+            Leechers = leechers;
+            Size = size;
+            Date = date;
+            Href = href;
         }
     }
-    public static string ShortenURL(string href) {
 
+    public static string ShortenURL(string href)
+    {
         string pattern = @"^/torrent/|\.html$";
-        string result = Regex.Replace(href, pattern, "");
-        return result;
-
-
+        return Regex.Replace(href, pattern, "");
     }
-    public void FilterByQuality() { }
-    public static List<Torrent> GetTorrents(HtmlDocument html) {
+
+    public static List<Torrent> GetTorrents(HtmlDocument html)
+    {
         try
         {
             var tableRows = html.DocumentNode.SelectNodes("//tr[@class='lista2']");
-
-
             List<Torrent> torrents = new List<Torrent>();
-            
+
             foreach (var tr in tableRows)
             {
                 var tds = tr.SelectNodes("./td");
-
                 var href = tds[1].SelectSingleNode("./a").Attributes[0].Value;
-                var shortenedHref =  ShortenURL(href);
+                var shortenedHref = ShortenURL(href);
                 string size = tds[4].InnerText;
                 int seeders = int.Parse(tds[5].ChildNodes[0].InnerText);
                 int leechers = int.Parse(tds[6].ChildNodes[0].InnerText);
                 string date = tds[3].InnerText;
                 var url = $"https://rargb.to{href}";
-                Torrent torrent = new Torrent(url, seeders, leechers, size, date, shortenedHref);
-                torrents.Add(torrent);
-
+                torrents.Add(new Torrent(url, seeders, leechers, size, date, shortenedHref));
             }
             return torrents;
         }
@@ -194,134 +141,167 @@ class Program
             throw new Exception("Torrents HTML not found. Invalid URL or no Torrents for this URL.");
         }
     }
+
     public static async Task<string> GetMagnetUri(Torrent torrent)
     {
         string url = torrent.Title;
         Uri uri = new Uri(url);
         var response = await GetHTTP(uri);
         var html = ParseHTTP(response);
-
         var td = html.DocumentNode.SelectSingleNode("//td[@class='lista']");
         var anchors = td.SelectNodes("./a");
-        var magnet = anchors[0].Attributes[2].Value;
-        return magnet;
+        return anchors[0].Attributes[2].Value;
     }
-    public static void DisplayTorrents(int MaxPages, List<Torrent> sortedList) {
-        //Display torrents
+
+    public static void DisplayTorrents(int MaxPages, List<Torrent> sortedList)
+    {
         Console.WriteLine("Sorted List of Torrents by Seeders:");
-        if(sortedList.Count < MaxPages) { MaxPages = sortedList.Count; }
+        if (sortedList.Count < MaxPages) { MaxPages = sortedList.Count; }
         for (int i = 0; i < MaxPages; i++)
         {
-            Console.WriteLine($"[{i}] | {sortedList[i].Href} | {sortedList[i].Seeders} | {DateTime.Parse(sortedList[i].Date).Year} ");
+            Console.WriteLine($"[{i}] | {sortedList[i].Href} | {sortedList[i].Seeders} | {DateTime.Parse(sortedList[i].Date).Year}");
             Console.WriteLine("--------------------------------------------------------------");
         }
-
     }
-    public static async Task<int> GetMaxPages(string search, string category) {
 
-        string url = Config.BaseUrl + $"search/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
-        if (category == "all") { url = url.Split("&category[]")[0]; }
+    public static async Task<int> GetMaxPages(string QueryURL)
+    {
+        string url = QueryURL;
         Uri uri = new Uri(url);
         var response = await GetHTTP(uri);
         var html = ParseHTTP(response);
-        try //If there are number of pages, unpopular movies may not have this
+
+        try
         {
             var pagerDiv = html.DocumentNode.SelectSingleNode("//div[@id='pager_links']");
             if (pagerDiv == null) return 1;
-           
-            var anchor_tags = pagerDiv.SelectNodes("./a");
-            if (anchor_tags == null || anchor_tags.Count == 0) return 1;
-            var last_element = anchor_tags.Last();
-            int length = anchor_tags.Count();
-            if (last_element.InnerText == ">>")
-            {
 
-                var second_to_last = anchor_tags[length - 2];
-                int max_pages = int.Parse(second_to_last.InnerText);
-                return max_pages;
-            }
-            else
-            {
-                int max_pages = int.Parse(last_element.InnerText);
-                return max_pages;
-            }
-
-
+            var anchorTags = pagerDiv.SelectNodes("./a");
+            if (anchorTags == null || anchorTags.Count == 0) return 1;
+            var lastElement = anchorTags.Last();
+            return lastElement.InnerText == ">>"
+                ? int.Parse(anchorTags[anchorTags.Count - 2].InnerText)
+                : int.Parse(lastElement.InnerText);
         }
-        catch //shit movies with like 4-5 links like battleship potemkin
+        catch
         {
-            int max_pages = 1;
-            return max_pages;
+            return 1;
         }
     }
-    private static string BuildPageUrl(int page, string search, string category)
+    public static string BuildQueryUrl(string name, List<string> categories, int page=1)
     {
-        var page_url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
-        if (category == "all") { page_url = page_url.Split("&category[]")[0]; }
-        return page_url;
+        var searchQuery = $"search/{page}/?search={Uri.EscapeDataString(name)}";
+        var url = Config.BaseUrl + searchQuery;
+        foreach (var category in categories) {
+            string categoryString = $"&category[]={Uri.EscapeDataString(category)}";
+            url += categoryString;
+
+
+        }
+        Console.WriteLine(url);
+        return url;
+       //var url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
     }
-    public static async Task<List<Torrent>> ProcessPage(int page, string search, string category)
+   
+
+    public static async Task<List<Torrent>> ProcessPage(string QueryURL)
     {
-        string pageUrl = BuildPageUrl(page, search, category);
-        string response = await GetHTTP(new Uri(pageUrl));
+        
+        string response = await GetHTTP(new Uri(QueryURL));
         HtmlDocument html = ParseHTTP(response);
         return GetTorrents(html);
     }
-    public static async Task Main(string[] args)
+
+    public static async Task<int> Main(string[] args)
     {
-        InitializeConfig();
-        Dictionary<string, string> searchParams =  GetArgumentsCLI(args);
-        string search = searchParams["search"];
-        string category = searchParams["category"];
-
-        int max_pages = await GetMaxPages(search, category);
-        int page = 1;
-
-        List<List<Torrent>> torrentList = new List<List<Torrent>>();
-
-        //Main loop for page indexing
-        max_pages = Math.Min(Config.MaxPages, max_pages);
-        while (page<=max_pages) 
+        var rootCommand = new RootCommand
         {
-            await Task.Delay(1000);
+                new Argument<string>("name", "The name of the torrent file"),
+                new Option<bool>("-tv", "Specify the TV category"),
+                new Option<bool>("-movies", "Specify the Movies category"),
+                new Option<bool>("-games", "Specify the Games category"),
+                new Option<bool>("-music", "Specify the Music category")
+        };
 
-            var page_url = BuildPageUrl(page, search, category);
-            var torrents = await ProcessPage(page, search, category);
-            torrentList.Add(torrents);
-            page++;
-
-        }
-        List<Torrent> sortedList = torrentList.SelectMany(t => t).OrderByDescending(t => t.Seeders).ToList();
-
-        DisplayTorrents(Config.MaxDisplay, sortedList); //-> prints all torrents
-
-        while (true)
+        var searchCommand = new Command("search", "Search for torrents")
         {
-            Console.WriteLine("Select a Torrent: ");
-            string? input = Console.ReadLine();
-            if(input == "quit") { break; }
+            new Argument<string>("Name", "The name of the Torrent you wish to search for")
+        };
 
-            try
+        searchCommand.Handler = CommandHandler.Create<string>((commandName) =>
+        {
+            Console.WriteLine($"Subcommand called: {commandName} Executed");
+            return Task.CompletedTask;
+        });
+
+        rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool>(async (name, tv, movies, games, music) =>
+        {
+            
+           // InitializeConfig();
+
+
+            string search = name;
+            List<string> categories = new List<string>();
+            if (tv) { categories.Add("tv"); }
+            if (movies) { categories.Add("movies"); }
+            if (games) { categories.Add("games"); }
+            if (music) { categories.Add("music"); }
+            var url = BuildQueryUrl(name, categories);
+            // string category = searchParams.ContainsKey("category") ? searchParams["category"] : "all";
+            string categery = "tv";
+            int max_pages = await GetMaxPages(url);
+            int page = 1;
+
+            List<List<Torrent>> torrentList = new List<List<Torrent>>();
+
+            max_pages = Math.Min(Config.MaxPages, max_pages);
+            while (page <= max_pages)
             {
+                await Task.Delay(1000);
 
-                int index = int.Parse(input);
-                Torrent SelectedTorrent = sortedList[index];
-                Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
-                var magnet = await GetMagnetUri(SelectedTorrent);
-                await QbitTorrent.AddTorrent(magnet);
-                break;
+                var page_url = (page==1)? url: BuildQueryUrl(name, categories, page);
+                var torrents = await ProcessPage(page_url);
+
+                torrentList.Add(torrents);
+                page++;
             }
-            catch (IndexOutOfRangeException)
+
+            var allTorrents = torrentList.SelectMany(x => x).ToList();
+            var sortedList = allTorrents.OrderByDescending(x => x.Seeders).ToList();
+            DisplayTorrents(Config.MaxDisplay, sortedList);
+            while (true)
             {
-                Console.WriteLine("Index does not exist.");
-                continue;
+                Console.WriteLine("Select a Torrent: ");
+                string? input = Console.ReadLine();
+                if (input == "quit") { break; }
+
+                try
+                {
+
+                    int index = int.Parse(input);
+                    Torrent SelectedTorrent = sortedList[index];
+                    Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
+                    var magnet = await GetMagnetUri(SelectedTorrent);
+                    await QbitTorrent.AddTorrent(magnet);
+                    break;
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Index does not exist.");
+                    continue;
+                }
+                catch
+                {
+
+                    Console.WriteLine("Torrent does not exist");
+                }
             }
-            catch {
 
-                Console.WriteLine("Torrent does not exist");
-            }
-        }
+            return 0;
+        });
 
+        rootCommand.AddCommand(searchCommand);
 
+        return await rootCommand.InvokeAsync(args); // Correct invocation here
     }
 }
