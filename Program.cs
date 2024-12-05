@@ -14,50 +14,28 @@ using HttpRequests;
 
 class Program
 {
-   
-
-    
-  
-
-   
-
-   
-
-   
-    
-
-    
-
     public static async Task<int> Main(string[] args)
     {
-        var rootCommand = new RootCommand
-        {
-            new Argument<string>("name", "The name of the torrent file"),
-            new Option<bool>("-tv", "Specify the TV category"),
-            new Option<bool>("-movies", "Specify the Movies category"),
-            new Option<bool>("-games", "Specify the Games category"),
-            new Option<bool>("-music", "Specify the Music category")
-        };
+        var rootCommand = new RootCommand {
+      new Argument<string>("name", "The name of the torrent file"),
+      new Option<bool>("-tv", "Specify the TV category"),
+      new Option<bool>("-movies", "Specify the Movies category"),
+      new Option<bool>("-games", "Specify the Games category"),
+      new Option<bool>("-music", "Specify the Music category")
+    };
 
-        var searchCommand = new Command("search", "Search for torrents")
-        {
-            new Argument<string>("Name", "The name of the Torrent you wish to search for")
-        };
+        var searchCommand =
+            new Command("search", "Search for torrents") { new Argument<string>(
+            "Name", "The name of the Torrent you wish to search for") };
 
-        searchCommand.Handler = CommandHandler.Create<string>(
-            (commandName) =>
-            {
-                Console.WriteLine($"Subcommand called: {commandName} Executed");
-                return Task.CompletedTask;
-            }
-        );
+        searchCommand.Handler = CommandHandler.Create<string>((commandName) => {
+            Console.WriteLine($"Subcommand called: {commandName} Executed");
+            return Task.CompletedTask;
+        });
 
         rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool>(
-            async (name, tv, movies, games, music) =>
-            {
-                 Config.InitializeConfig();
-
-
+            async (name, tv, movies, games, music) => {
+                Config.InitializeConfig();
 
                 List<string> categories = new List<string>();
                 if (tv)
@@ -88,7 +66,9 @@ class Program
                 {
                     await Task.Delay(1000);
 
-                    var page_url = (page == 1) ? url : UrlHelper.BuildQueryUrl(name, categories, page);
+                    var page_url =
+                    (page == 1) ? url
+                                : UrlHelper.BuildQueryUrl(name, categories, page);
                     var torrents = await PageHelper.ProcessPage(page_url);
 
                     torrentList.Add(torrents);
@@ -96,7 +76,8 @@ class Program
                 }
 
                 var allTorrents = torrentList.SelectMany(x => x).ToList();
-                var sortedList = allTorrents.OrderByDescending(x => x.Seeders).ToList();
+                var sortedList =
+                allTorrents.OrderByDescending(x => x.Seeders).ToList();
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
                 while (true)
                 {
@@ -128,11 +109,10 @@ class Program
                 }
 
                 return 0;
-            }
-        );
+            });
 
         rootCommand.AddCommand(searchCommand);
 
-        return await rootCommand.InvokeAsync(args); // Correct invocation here
+        return await rootCommand.InvokeAsync(args);  // Correct invocation here
     }
 }
