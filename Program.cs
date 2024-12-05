@@ -21,7 +21,9 @@ class Program
       new Option<bool>("-tv", "Specify the TV category"),
       new Option<bool>("-movies", "Specify the Movies category"),
       new Option<bool>("-games", "Specify the Games category"),
-      new Option<bool>("-music", "Specify the Music category")
+      new Option<bool>("-music", "Specify the Music category"),
+      new Option<int>("--max-pages", "The maximum number of pages to search for"), // This will take an integer value
+      
     };
 
         var searchCommand =
@@ -33,8 +35,8 @@ class Program
             return Task.CompletedTask;
         });
 
-        rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool>(
-            async (name, tv, movies, games, music) => {
+        rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool, int>(
+            async (name, tv, movies, games, music, max_pages_arg) => {
                 Config.InitializeConfig();
 
                 List<string> categories = new List<string>();
@@ -60,8 +62,8 @@ class Program
                 int page = 1;
 
                 List<List<Torrent>> torrentList = new List<List<Torrent>>();
-
-                max_pages = Math.Min(Config.MaxPages, max_pages);
+                int max_selected_pages = (max_pages_arg!=0) ? max_pages_arg : Config.MaxPages;
+                max_pages = Math.Min(max_selected_pages, max_pages);
                 while (page <= max_pages)
                 {
                     await Task.Delay(1000);
