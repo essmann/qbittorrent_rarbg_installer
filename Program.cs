@@ -11,6 +11,7 @@ class Program
     {
         public const string BaseUrl = "https://rargb.to/";
         public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+        public static int MaxPages = 2;
     }
     public static async Task<string> GetHTTP(Uri uri)
     {
@@ -142,13 +143,18 @@ class Program
             throw new Exception("Torrents HTML not found. Invalid URL or no Torrents for this URL.");
         }
     }
-    public static int GetMaxPages(HtmlDocument html) {
+    public static async Task<int> GetMaxPages(string search, string category) {
 
+        string url = Config.BaseUrl + $"search/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
+        if (category == "all") { url = url.Split("&category[]")[0]; }
+        Uri uri = new Uri(url);
+        var response = await GetHTTP(uri);
+        var html = ParseHTTP(response);
         try //If there are number of pages, unpopular movies may not have this
         {
             var pagerDiv = html.DocumentNode.SelectSingleNode("//div[@id='pager_links']");
             if (pagerDiv == null) return 1;
-            Console.WriteLine(pagerDiv);
+           
             var anchor_tags = pagerDiv.SelectNodes("./a");
             if (anchor_tags == null || anchor_tags.Count == 0) return 1;
             var last_element = anchor_tags.Last();
@@ -181,35 +187,24 @@ class Program
         string search = searchParams["search"];
         string category = searchParams["category"];
 
-        //Creating initial URL
-        string rarbgUrl = "https://rargb.to/";
-        string url = rarbgUrl + $"search/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
-        if (category == "all") { url = url.Split("&category[]")[0]; }
-        Uri uri = new Uri(url);
-
-        //Getting Page count
-        var response = await GetHTTP(uri);
-        var html = ParseHTTP(response);
-        int max_pages = GetMaxPages(html);
+        int max_pages = await GetMaxPages(search, category);
         int page = 1;
 
-
-        
         List<List<Torrent>> torrentList = new List<List<Torrent>>();
 
         //Main loop for page indexing
-        max_pages = 2; //TESTING PURPOSES
+        max_pages = 2; 
         while (page<=max_pages) 
         {
             await Task.Delay(1000);
 
             //Get URL
-            var page_url = rarbgUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
+            var page_url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
             if (category == "all") { page_url = page_url.Split("&category[]")[0]; }
             Uri page_uri = new Uri(page_url);
             //Parse
-            response = await GetHTTP(page_uri);
-            html = ParseHTTP(response);
+            var response = await GetHTTP(page_uri);
+            var html = ParseHTTP(response);
             
             Console.WriteLine(page_url);
             //Gets all Torrents from each site
