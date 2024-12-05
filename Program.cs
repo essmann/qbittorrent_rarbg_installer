@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using HttpRequests;
 using System.ComponentModel.Design;
 using System.Net;
 using System.Reflection;
@@ -256,7 +257,8 @@ class Program
                 int index = int.Parse(input);
                 Torrent SelectedTorrent = sortedList[index];
                 Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
-                var test = GetMagnetUri(SelectedTorrent);
+                var test = await GetMagnetUri(SelectedTorrent);
+                 QbitTorrent.AddTorrent(test);
             }
             catch (IndexOutOfRangeException)
             {

@@ -8,7 +8,7 @@ namespace HttpRequests
 {
     public  class QbitTorrent
     {
-        public static string qbittorrentUrl = "http://localhost:8080";
+        public static string qbittorrentUrl = "http://10.0.0.7:8080";
         public static string username = "essmann";
         public static string password = "123456";
 
