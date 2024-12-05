@@ -10,6 +10,7 @@ Prerequisites
 Before running the CLI tool, you need the following installed:
 
 - .NET SDK (version 8.0 or higher)
+- .NET Runtime 
 - qBittorrent: Make sure qBittorrent is installed on your system and is running.
  Download and install qBittorrent from [](https://choosealicense.com/licenses/mit/) here.
 - You will also need to set up environment variables for your qBittorrent username and password. This allows the program to authenticate and interact with your qBittorrent client.
