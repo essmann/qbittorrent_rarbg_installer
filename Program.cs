@@ -61,12 +61,7 @@ class Program
         }
     }
 
-    public static string ShortenURL(string href)
-    {
-        string pattern = @"^/torrent/|\.html$";
-        return Regex.Replace(href, pattern, "");
-    }
-
+   
     public static List<Torrent> GetTorrents(HtmlDocument html)
     {
         try
@@ -78,7 +73,7 @@ class Program
             {
                 var tds = tr.SelectNodes("./td");
                 var href = tds[1].SelectSingleNode("./a").Attributes[0].Value;
-                var shortenedHref = ShortenURL(href);
+                var shortenedHref =  UrlHelper.ShortenURL(href);
                 string size = tds[4].InnerText;
                 int seeders = int.Parse(tds[5].ChildNodes[0].InnerText);
                 int leechers = int.Parse(tds[6].ChildNodes[0].InnerText);
@@ -149,19 +144,7 @@ class Program
             return 1;
         }
     }
-    public static string BuildQueryUrl(string name, List<string> categories, int page = 1)
-    {
-        var searchQuery = $"search/{page}/?search={Uri.EscapeDataString(name)}";
-        var url = Config.BaseUrl + searchQuery;
-        foreach (var category in categories)
-        {
-            string categoryString = $"&category[]={Uri.EscapeDataString(category)}";
-            url += categoryString;
-        }
-        Console.WriteLine(url);
-        return url;
-        //var url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
-    }
+  
 
     public static async Task<List<Torrent>> ProcessPage(string QueryURL)
     {
@@ -218,7 +201,7 @@ class Program
                 {
                     categories.Add("music");
                 }
-                var url = BuildQueryUrl(name, categories);
+                var url = UrlHelper.BuildQueryUrl(name, categories);
 
                 int max_pages = await GetMaxPages(url);
                 int page = 1;
@@ -230,7 +213,7 @@ class Program
                 {
                     await Task.Delay(1000);
 
-                    var page_url = (page == 1) ? url : BuildQueryUrl(name, categories, page);
+                    var page_url = (page == 1) ? url : UrlHelper.BuildQueryUrl(name, categories, page);
                     var torrents = await ProcessPage(page_url);
 
                     torrentList.Add(torrents);
