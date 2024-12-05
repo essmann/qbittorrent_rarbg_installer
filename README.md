@@ -31,7 +31,7 @@ setx qbtpassword "insert password here";
 ./dependencies.ps1
 ```
 ## 5) Final step - Go to your Qbittorrent client, Tools -> Options -> WebUI -> Enable
-#### Use * to accept connections on any local ip address including localhost. Make sure the port is 8080
+#### Use * to accept connections on any local ip address including localhost. Make sure the port is 8080. If you want to use a specific IP address, make sure to also write it down in the server_url.txt file in the repository.
 ## Usage
 ###
  ```powershell
