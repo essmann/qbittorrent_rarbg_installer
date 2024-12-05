@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj": {}
+    "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj": {
+    "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj",
+        "projectUniqueName": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj",
         "projectName": "HttpRequests",
-        "projectPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\HttpRequests.csproj",
+        "projectPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\HttpRequests.csproj",
         "packagesPath": "C:\\Users\\Essmann\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\httprequests\\obj\\",
+        "outputPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
