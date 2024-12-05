@@ -14,6 +14,20 @@ public static class Config
     public static int MaxPages = 2;
     public static int MaxDisplay = 15;
 
+    public static void InitializeConfig()
+    {
+        string cwd = Directory.GetCurrentDirectory();
+        string projectDirectory = Directory.GetParent(cwd).Parent.Parent.FullName;
+        string fileName = "config.txt";
+        string filePath = Path.Combine(projectDirectory, fileName);
+
+        if (!File.Exists(filePath))
+        {
+            File.Create(filePath).Close();
+            Config.SaveToFile(filePath);
+            Console.WriteLine($"Config.txt file created at {cwd}");
+        }
+    }
     public static void SaveToFile(string filePath)
     {
         var configData = new { BaseUrl, UserAgent, MaxPages, MaxDisplay };

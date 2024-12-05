@@ -17,49 +17,11 @@ class Program
    
 
     
-    public static void InitializeConfig()
-    {
-        string cwd = Directory.GetCurrentDirectory();
-        string projectDirectory = Directory.GetParent(cwd).Parent.Parent.FullName;
-        string fileName = "config.txt";
-        string filePath = Path.Combine(projectDirectory, fileName);
-
-        if (!File.Exists(filePath))
-        {
-            File.Create(filePath).Close();
-            Config.SaveToFile(filePath);
-            Console.WriteLine($"Config.txt file created at {cwd}");
-        }
-    }
+  
 
    
 
-    public class Torrent
-    {
-        public string Title { get; set; }
-        public int Seeders { get; set; }
-        public int Leechers { get; set; }
-        public string Size { get; set; }
-        public string Date { get; set; }
-        public string Href { get; set; }
-
-        public Torrent(
-            string title,
-            int seeders,
-            int leechers,
-            string size,
-            string date,
-            string href
-        )
-        {
-            Title = title;
-            Seeders = seeders;
-            Leechers = leechers;
-            Size = size;
-            Date = date;
-            Href = href;
-        }
-    }
+   
 
    
     public static List<Torrent> GetTorrents(HtmlDocument html)
@@ -180,7 +142,7 @@ class Program
         rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool>(
             async (name, tv, movies, games, music) =>
             {
-                // InitializeConfig();
+                 Config.InitializeConfig();
 
 
 
