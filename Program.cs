@@ -180,6 +180,19 @@ class Program
             return max_pages;
         }
     }
+    private static string BuildPageUrl(int page, string search, string category)
+    {
+        var page_url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
+        if (category == "all") { page_url = page_url.Split("&category[]")[0]; }
+        return page_url;
+    }
+    public static async Task<List<Torrent>> ProcessPage(int page, string search, string category)
+    {
+        string pageUrl = BuildPageUrl(page, search, category);
+        string response = await GetHTTP(new Uri(pageUrl));
+        HtmlDocument html = ParseHTTP(response);
+        return GetTorrents(html);
+    }
     public static async Task Main(string[] args)
     {
         
@@ -199,8 +212,7 @@ class Program
             await Task.Delay(1000);
 
             //Get URL
-            var page_url = Config.BaseUrl + $"search/{page}/?search={Uri.EscapeDataString(search)}&category[]={Uri.EscapeDataString(category)}";
-            if (category == "all") { page_url = page_url.Split("&category[]")[0]; }
+            var page_url = BuildPageUrl(page, search, category);
             Uri page_uri = new Uri(page_url);
             //Parse
             var response = await GetHTTP(page_uri);
