@@ -7,11 +7,16 @@ using System.Text.RegularExpressions;
 class Program
 {
     static readonly HttpClient client = new HttpClient();
+    public static class Config
+    {
+        public const string BaseUrl = "https://rargb.to/";
+        public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+    }
     public static async Task<string> GetHTTP(Uri uri)
     {
         try
         {
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+            client.DefaultRequestHeaders.Add("User-Agent", Config.UserAgent);
 
             // Send a GET request asynchronously
             using HttpResponseMessage response = await client.GetAsync(uri);
@@ -142,8 +147,10 @@ class Program
         try //If there are number of pages, unpopular movies may not have this
         {
             var pagerDiv = html.DocumentNode.SelectSingleNode("//div[@id='pager_links']");
+            if (pagerDiv == null) return 1;
             Console.WriteLine(pagerDiv);
             var anchor_tags = pagerDiv.SelectNodes("./a");
+            if (anchor_tags == null || anchor_tags.Count == 0) return 1;
             var last_element = anchor_tags.Last();
             int length = anchor_tags.Count();
             if (last_element.InnerText == ">>")
