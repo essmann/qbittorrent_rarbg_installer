@@ -13,31 +13,42 @@ Before running the CLI tool, you need the following installed:
 - qBittorrent: Make sure qBittorrent is installed on your system and is running.
  Download and install qBittorrent from [](https://choosealicense.com/licenses/mit/) here.
 - You will also need to set up environment variables for your qBittorrent username and password. This allows the program to authenticate and interact with your qBittorrent client.
-## 1) Download repository and put it in a folder
+## 1) Download the repository to a folder and run Initialize.ps1
 ```powershell
-git clone https://github.com/essmann/qbittorrent_rarbg_installer.git
+mkdir "foldername"
+cd "foldername"
+git clone "https://github.com/essmann/qbittorrent_rarbg_installer.git"
+cd qbittorrent_rarbg_installer/Scripts
+.\initialize.ps1
+#Refresh your Terminal after this.
 ```
-## 2) Run the initialize.ps1 Script 
+## 2) In Config.JSON insert your qBittorrent username, password and IP address
+```json
+{
+	"IPAddress": "http://yourip:port",
+	"Username":  "yourusername",
+	"Password":  "yourpassword"
+}
+```
 
-## 3) Create username + pw env variables with matching keys like this
-### Setting up environment variables on Windows (Powershell)
-```powershell
-setx qbtusername "insert username here";
-setx qbtpassword "insert password here";
-```
-## 4)
-### If you are missing .NET SDK or runtime, run this file to install them. 
-```powershell
-./dependencies.ps1
-```
-## 5) Final step - Go to your Qbittorrent client, Tools -> Options -> WebUI -> Enable
-#### Use * to accept connections on any local ip address including localhost. Make sure the port is 8080. If you want to use a specific IP address, make sure to also write it down in the server_url.txt file in the repository.
+## 3) Go to qBittorrent -> Tools/Options -> Enable WebUI. Type in your username, password and IP address. Make sure this matches your Config.JSON.
+
 ## Usage
 ###
- ```powershell
-torrent <name> [-category <-tv>|<-movies>|<-music>|<-games>]
+ ```yaml
+Arguments:
+  <name>  The name of the torrent file
+
+Options:
+  -tv                      Specify the TV category
+  -movies                  Specify the Movies category
+  -games                   Specify the Games category
+  -music                   Specify the Music category
+  --max-pages <max-pages>  The maximum number of pages to search for
+  --version                Show version information
+  -?, -h, --help           Show help and usage information
 ```
-```bat
+```yaml
 
 
 PS C:\coding> torrent "Dexter s01" -tv
