@@ -38,6 +38,9 @@ class Program
             }
             Console.WriteLine($"Configuration saved to {filePath}");
         }
+        
+       
+
     }
     public static void InitializeConfig()
     {
@@ -168,6 +171,7 @@ class Program
 
 
             List<Torrent> torrents = new List<Torrent>();
+            
             foreach (var tr in tableRows)
             {
                 var tds = tr.SelectNodes("./td");
@@ -276,7 +280,7 @@ class Program
         List<List<Torrent>> torrentList = new List<List<Torrent>>();
 
         //Main loop for page indexing
-        max_pages = 2; 
+        max_pages = Math.Min(Config.MaxPages, max_pages);
         while (page<=max_pages) 
         {
             await Task.Delay(1000);
