@@ -56,7 +56,7 @@ class Program
     public static Dictionary<string, string> GetArgumentsCLI(string[] args)
     {
         Dictionary<string, string> searchParams = new Dictionary<string, string>();
-        Console.WriteLine($"Command Line Arguments: {args}");
+       
         try
         {
             if (args.Length == 0) { throw new Exception("No arguments inputted"); }
@@ -236,8 +236,23 @@ class Program
         while (true)
         {
             string? input = Console.ReadLine();
+            if(input == "quit") { break; }
 
+            try
+            {
 
+                int index = int.Parse(input);
+                Torrent SelectedTorrent = sortedList[index];
+                Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
+            }
+            catch (IndexOutOfRangeException)
+            {
+
+            }
+            catch {
+
+                Console.WriteLine("Torrent does not exist");
+            }
         }
 
 
