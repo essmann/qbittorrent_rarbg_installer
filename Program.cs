@@ -40,8 +40,8 @@ class Program
             async (name, tv, movies, games, music, max_pages_arg) => {
 
 
-
-
+                var start = System.Diagnostics.Stopwatch.StartNew();
+                
                 SetEnvVariables.SetEnvironmentVariables();
 
                 
@@ -103,6 +103,8 @@ class Program
                    
                 }
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
+                Console.WriteLine($"Elapsed time in ms: {start.Elapsed.Milliseconds}");
+                start.Stop();
                 while (true)
                 {
                     Console.WriteLine("Select a Torrent: ");
