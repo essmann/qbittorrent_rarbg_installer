@@ -79,7 +79,7 @@ namespace HttpRequests
 
                 // Display the index, seeders, URL, and details with proper formatting
                 Console.WriteLine("{0,-" + indexWidth + "} | {1,-" + seedersWidth + "} | {2,-" + urlColumnWidth + "} | {3,-" + detailsColumnWidth + "}",
-                    i, sortedList[i].Seeders, truncatedUrl, details);
+                    i+1, sortedList[i].Seeders, truncatedUrl, details);
             }
         }
 

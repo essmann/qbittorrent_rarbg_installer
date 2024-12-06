@@ -114,7 +114,7 @@ class Program
 
                     try
                     {
-                        int index = int.Parse(input);
+                        int index = int.Parse(input)-1;
                         Torrent SelectedTorrent = sortedList[index];
                         Console.WriteLine($"Selected torrent: {SelectedTorrent.Title}");
                         var magnet = await TorrentHelper.GetMagnetUri(SelectedTorrent);
