@@ -14,14 +14,11 @@ Before running the CLI tool, you need the following installed:
 - qBittorrent: Make sure qBittorrent is installed on your system and is running.
  Download and install qBittorrent from [](https://choosealicense.com/licenses/mit/) here.
 - You will also need to set up environment variables for your qBittorrent username and password. This allows the program to authenticate and interact with your qBittorrent client.
-## 1) Download the repository to a folder and run Initialize.ps1
+## 1) Download the repository to a folder1
 ```powershell
 mkdir "foldername"
 cd "foldername"
 git clone "https://github.com/essmann/qbittorrent_rarbg_installer.git"
-cd qbittorrent_rarbg_installer/Scripts
-.\initialize.ps1
-#Refresh your Terminal after this.
 ```
 ## 2) In Config.JSON insert your qBittorrent username, password and IP address
 ```json
@@ -34,6 +31,11 @@ cd qbittorrent_rarbg_installer/Scripts
 
 ## 3) Go to qBittorrent -> Tools/Options -> Enable WebUI. Type in your username, password and IP address. Make sure this matches your Config.JSON.
 
+## 4)  Run the Program
+	```powershell
+	dotnet run "Harry Potter" 
+	```
+ #### Program will execute, refresh the Terminal after this and you can run the program from anywhere with the alias "torrent" -> torrent "moviename" -options
 ## Usage
 ###
  ```yaml
