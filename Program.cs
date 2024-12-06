@@ -44,7 +44,7 @@ class Program
 
                 SetEnvVariables.SetEnvironmentVariables();
 
-                Config.InitializeConfig();
+                
 
                 
 
