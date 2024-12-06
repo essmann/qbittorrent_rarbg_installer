@@ -1,5 +1,5 @@
 # Ensure the environment variable is set
-$projectPath = Join-Path $env:rarbg_cli_path "HttpRequests.csproj"
+$projectPath = Join-Path $env:rarbg_cli_path "RarbgCLI.csproj"
 
 # Ensure the project file path exists
 if (Test-Path $projectPath) {
