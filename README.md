@@ -32,10 +32,11 @@ git clone "https://github.com/essmann/qbittorrent_rarbg_installer.git"
 ## 3) Go to qBittorrent -> Tools/Options -> Enable WebUI. Type in your username, password and IP address. Make sure this matches your Config.JSON.
 
 ## 4)  Run the Program
-	```powershell
-	dotnet run "Harry Potter" 
-	```
- #### Program will execute, refresh the Terminal after this and you can run the program from anywhere with the alias "torrent" -> torrent "moviename" -options
+```powershell
+	dotnet run "Harry Potter"
+	
+```
+ #### Program will execute, refresh the Terminal after this and you can run the program from anywhere with the alias "torrent"
 ## Usage
 ###
  ```yaml
