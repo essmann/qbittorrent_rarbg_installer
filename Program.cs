@@ -103,8 +103,13 @@ class Program
                    
                 }
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
-                Console.WriteLine($"Elapsed time in ms: {start.Elapsed.Milliseconds}");
+                int time = start.Elapsed.Milliseconds;
+                Console.WriteLine($"Elapsed time in ms: {time}");
                 start.Stop();
+                string projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                string timeFile = Path.Combine(projectRoot, "time.txt");
+                string text = $"Time: {time.ToString()} | Arguments: {name} | Date: {DateTime.Now.ToString()} ";
+                File.AppendAllText(timeFile, text + Environment.NewLine);
                 while (true)
                 {
                     Console.WriteLine("Select a Torrent: ");
