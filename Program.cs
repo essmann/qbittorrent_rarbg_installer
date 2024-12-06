@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.ComponentModel;
 using HttpRequests;
+using HttpRequests.Classes;
 
 class Program
 {
@@ -37,9 +38,18 @@ class Program
 
         rootCommand.Handler = CommandHandler.Create<string, bool, bool, bool, bool, int>(
             async (name, tv, movies, games, music, max_pages_arg) => {
+
+
+
+
+                SetEnvVariables.SetEnvironmentVariables();
+
                 Config.InitializeConfig();
+
                 
 
+                // Start a thread or a long-running task to simulate progress
+                
                 List<string> categories = new List<string>();
                 if (tv)
                 {
@@ -62,6 +72,9 @@ class Program
                 int max_pages = await PageHelper.GetMaxPages(url);
                 int page = 1;
 
+                
+                
+
                 List<List<Torrent>> torrentList = new List<List<Torrent>>();
                 int max_selected_pages = (max_pages_arg!=0) ? max_pages_arg : Config.MaxPages;
                 max_pages = Math.Min(max_selected_pages, max_pages);
@@ -77,13 +90,17 @@ class Program
                     torrentList.Add(torrents);
                     page++;
                 }
-                
+               
+
                 var allTorrents = torrentList.SelectMany(x => x).ToList();
+                
+                
                 var sortedList =
                 allTorrents.OrderByDescending(x => x.Seeders).ToList();
                 foreach (var torrent in sortedList)
                 {
                     UrlHelper.GetUrlInfo(torrent);
+                   
                 }
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
                 while (true)
