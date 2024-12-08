@@ -42,8 +42,8 @@ class Program
 
                 var start = System.Diagnostics.Stopwatch.StartNew();
                 
-                SetEnvVariables.SetEnvironmentVariables();
-
+                int status = SetEnvVariables.SetEnvironmentVariables();
+                if (status == 0) { return 0; }
                 
 
                 
