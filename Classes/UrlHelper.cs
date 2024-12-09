@@ -56,7 +56,7 @@ namespace HttpRequests
 
                 if (match.Groups["bluray"].Success && string.IsNullOrEmpty(torrent.Bluray))
                 {
-                    Console.WriteLine($"Bluray: {match.Groups["bluray"].Value}");
+                    
                     torrent.Bluray = match.Groups["bluray"].Value;
                 }
 
