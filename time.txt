@@ -1,8 +1,0 @@
-Time: 236 | Arguments: harry potter | Date: 09.12.2024 14:54:36 
-Time: 996 | Arguments: harry potter | Date: 09.12.2024 14:55:21 
-Time: 69 | Arguments: harry potter | Date: 09.12.2024 15:00:29 
-Time: 611 | Arguments: harry potter | Date: 09.12.2024 15:00:46 
-Time: 249 | Arguments: harry potter | Date: 09.12.2024 15:01:38 
-Time: 309 | Arguments: harry potter | Date: 09.12.2024 15:05:50 
-Time: 177 | Arguments: harry potter | Date: 09.12.2024 15:06:57 
-Time: 324 | Arguments: harry potter | Date: 09.12.2024 15:07:22 
