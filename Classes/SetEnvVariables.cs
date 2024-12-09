@@ -12,7 +12,8 @@ namespace HttpRequests.Classes
         {
             try
             {
-                string projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string? projectRoot = Directory.GetParent(programDirectory).Parent.Parent.Parent.FullName;
                 string scriptsDirectory = Path.Combine(projectRoot, "Scripts");
 
                 // Step 3: Retrieve the current PATH for the user
