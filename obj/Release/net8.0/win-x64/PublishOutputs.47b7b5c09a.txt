@@ -1,0 +1,2 @@
+C:\Users\Essmann\source\repos\HttpRequests\HttpRequests\x64-windows\RarbgCLI.pdb
+C:\Users\Essmann\source\repos\HttpRequests\HttpRequests\x64-windows\RarbgCLI.exe
