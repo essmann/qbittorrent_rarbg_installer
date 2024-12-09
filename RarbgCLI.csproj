@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="x64-windows\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
