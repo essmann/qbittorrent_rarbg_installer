@@ -26,20 +26,16 @@ namespace RarbgCLI.Classes
         public static void CheckAndSetEnvironmentVariables()
         {
             // Get the path from the environment variable
-            string? projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-            Console.WriteLine(projectRoot);
+            string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string? projectRoot = Directory.GetParent(programDirectory).Parent.Parent.Parent.FullName; //lmao
+            Console.WriteLine(programDirectory);  // For debugging
+            Console.WriteLine(projectRoot);  // For debugging
+           
             string? filePath = "config.json";
-            if (string.IsNullOrEmpty(projectRoot))
-            {
-                Console.WriteLine("Environment variable 'rarbg_cli_path' is not set.");
-                return;
-            }
+           
+            
             string fullPath = Path.Combine(projectRoot, filePath);
-            string? username = Environment.GetEnvironmentVariable("qbtusername");
-            string? password = Environment.GetEnvironmentVariable("qbtpassword");
-            // If necessary, create it.
-            if (username == null || password == null)
-            {
+            
                 // Read JSON from a file
                 try
                 {
@@ -70,7 +66,7 @@ namespace RarbgCLI.Classes
                     Console.WriteLine($"Error reading file: {ex.Message}");
                 }
             }
-        }
+        
 
 
         public static async Task Authenticate()
