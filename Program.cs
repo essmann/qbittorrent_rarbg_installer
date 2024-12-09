@@ -104,7 +104,7 @@ class Program
                 }
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
                 
-                string projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+              
                
                 
                
