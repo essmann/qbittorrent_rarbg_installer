@@ -23,17 +23,27 @@ namespace RarbgCLI.Classes
 
         private static bool EnvironmentVarChecked = false;
 
+        private static string JsonTemplate = @"{
+        ""IPAddress"": ""http://10.0.0.7:8080"",
+        ""Username"":  ""volhosis"",
+        ""Password"":  ""123456""
+    }";
+
         public static void GetCredentialsFromJSON()
         {
             
             string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            
+           
            
             string? filePath = "config.json";
            
             
             string fullPath = Path.Combine(programDirectory, filePath);
-            
+            if (!File.Exists(fullPath)) {
+                
+                File.WriteAllText(fullPath,JsonTemplate);
+
+            }
                 // Read JSON from a file
                 try
                 {
