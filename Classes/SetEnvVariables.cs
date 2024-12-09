@@ -13,16 +13,15 @@ namespace HttpRequests.Classes
             try
             {
                 string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string? projectRoot = Directory.GetParent(programDirectory).Parent.Parent.Parent.FullName;
-                string scriptsDirectory = Path.Combine(projectRoot, "Scripts");
+                
 
                 // Step 3: Retrieve the current PATH for the user
                 string? currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
 
                 // Step 4: Append the 'root/' directory (if not already included)
-                if (!currentPath.Contains(projectRoot))
+                if (!currentPath.Contains(programDirectory))
                 {
-                    currentPath += $";{projectRoot}";
+                    currentPath += $";{programDirectory}";
                     Console.WriteLine("The current directory has been added to the PATH permanently.");
                 }
 
@@ -31,7 +30,7 @@ namespace HttpRequests.Classes
                 Environment.SetEnvironmentVariable("PATH", currentPath, EnvironmentVariableTarget.User);
                 // Step 6: Set a new permanent user environment variable called 'rarbgpath'
                 // Example value, adjust as needed
-                Environment.SetEnvironmentVariable("rarbg_cli_path", projectRoot, EnvironmentVariableTarget.User);
+                Environment.SetEnvironmentVariable("rarbg_cli_path", programDirectory, EnvironmentVariableTarget.User);
                 return 1;
             }
             catch(NullReferenceException )
