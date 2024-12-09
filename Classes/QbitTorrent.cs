@@ -7,46 +7,48 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace HttpRequests
+namespace RarbgCLI.Classes
 {
-    
-    public  class QbitTorrent
+
+    public class QbitTorrent
     {
-        
+
         private static readonly HttpClient client = new HttpClient();
         public static string qbittorrentUrl = "http://0.0.0.0:8080";
-        
+
         public static string? Username { get; set; }
         public static string? Password { get; set; }
 
         private static bool isAuthenticated = false;
-       
+
         private static bool EnvironmentVarChecked = false;
 
         public static void CheckAndSetEnvironmentVariables()
         {
             // Get the path from the environment variable
-            string? basePath = Environment.GetEnvironmentVariable("rarbg_cli_path");
+            string? projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+            Console.WriteLine(projectRoot);
             string? filePath = "config.json";
-            if (string.IsNullOrEmpty(basePath))
+            if (string.IsNullOrEmpty(projectRoot))
             {
                 Console.WriteLine("Environment variable 'rarbg_cli_path' is not set.");
                 return;
             }
-            string fullPath = Path.Combine(basePath, filePath);
+            string fullPath = Path.Combine(projectRoot, filePath);
             string? username = Environment.GetEnvironmentVariable("qbtusername");
             string? password = Environment.GetEnvironmentVariable("qbtpassword");
             // If necessary, create it.
             if (username == null || password == null)
             {
                 // Read JSON from a file
-                try {
+                try
+                {
                     string json = File.ReadAllText(fullPath);
 
                     // Deserialize into the Config object
                     JSONconfig? config = JsonSerializer.Deserialize<JSONconfig>(json);
                     //set variables
-                    if((config.Password == null || config.Username == null))
+                    if (config.Password == null || config.Username == null)
                     {
                         throw new Exception($"Username or Password has not been set in {fullPath}");
                     }
@@ -69,16 +71,16 @@ namespace HttpRequests
                 }
             }
         }
-        
-        
+
+
         public static async Task Authenticate()
         {
             if (!EnvironmentVarChecked)
             {
                 CheckAndSetEnvironmentVariables();
-                 EnvironmentVarChecked = true;
+                EnvironmentVarChecked = true;
             }
-           
+
             if (isAuthenticated) return;
 
             var authContent = new FormUrlEncodedContent(new[]
@@ -120,8 +122,8 @@ namespace HttpRequests
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        
-    }
-       
+
+        }
+
     }
 }

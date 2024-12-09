@@ -12,6 +12,7 @@ using System.IO;
 using System.ComponentModel;
 using HttpRequests;
 using HttpRequests.Classes;
+using RarbgCLI.Classes;
 
 class Program
 {
