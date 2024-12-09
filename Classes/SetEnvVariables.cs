@@ -18,10 +18,10 @@ namespace HttpRequests.Classes
                 // Step 3: Retrieve the current PATH for the user
                 string? currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
 
-                // Step 4: Append the 'scripts/' directory (if not already included)
-                if (!currentPath.Contains(scriptsDirectory))
+                // Step 4: Append the 'root/' directory (if not already included)
+                if (!currentPath.Contains(projectRoot))
                 {
-                    currentPath += $";{scriptsDirectory}";
+                    currentPath += $";{projectRoot}";
                     Console.WriteLine("The current directory has been added to the PATH permanently.");
                 }
 
