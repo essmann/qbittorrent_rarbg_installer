@@ -8,20 +8,21 @@ namespace HttpRequests.Classes
 {
     internal class SetEnvVariables
     {
-        public static int SetEnvironmentVariables()
+        public static int SetEnvironmentVariables() //This might change in production
         {
             try
             {
-                string projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string? projectRoot = Directory.GetParent(programDirectory).Parent.Parent.Parent.FullName;
                 string scriptsDirectory = Path.Combine(projectRoot, "Scripts");
 
                 // Step 3: Retrieve the current PATH for the user
                 string? currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
 
-                // Step 4: Append the 'scripts/' directory (if not already included)
-                if (!currentPath.Contains(scriptsDirectory))
+                // Step 4: Append the 'root/' directory (if not already included)
+                if (!currentPath.Contains(projectRoot))
                 {
-                    currentPath += $";{scriptsDirectory}";
+                    currentPath += $";{projectRoot}";
                     Console.WriteLine("The current directory has been added to the PATH permanently.");
                 }
 

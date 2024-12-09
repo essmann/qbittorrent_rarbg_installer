@@ -12,6 +12,7 @@ using System.IO;
 using System.ComponentModel;
 using HttpRequests;
 using HttpRequests.Classes;
+using RarbgCLI.Classes;
 
 class Program
 {
@@ -40,7 +41,6 @@ class Program
             async (name, tv, movies, games, music, max_pages_arg) => {
 
 
-                var start = System.Diagnostics.Stopwatch.StartNew();
                 
                 int status = SetEnvVariables.SetEnvironmentVariables();
                 if (status == 0) { return 0; }
@@ -103,13 +103,11 @@ class Program
                    
                 }
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
-                int time = start.Elapsed.Milliseconds;
-                Console.WriteLine($"Elapsed time in ms: {time}");
-                start.Stop();
+                
                 string projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-                string timeFile = Path.Combine(projectRoot, "time.txt");
-                string text = $"Time: {time.ToString()} | Arguments: {name} | Date: {DateTime.Now.ToString()} ";
-                File.AppendAllText(timeFile, text + Environment.NewLine);
+               
+                
+               
                 while (true)
                 {
                     Console.WriteLine("Select a Torrent: ");

@@ -39,25 +39,24 @@ namespace HttpRequests
             {
                 if (match.Groups["resolution"].Success && string.IsNullOrEmpty(torrent.Res))
                 {
-                    Console.WriteLine($"Resolution: {match.Groups["resolution"].Value}");
+                   
                     torrent.Res = match.Groups["resolution"].Value;
                 }
 
                 if (match.Groups["codec"].Success && string.IsNullOrEmpty(torrent.Codec))
                 {
-                    Console.WriteLine($"Codec: {match.Groups["codec"].Value}");
+                    
                     torrent.Codec = match.Groups["codec"].Value;
                 }
 
                 if (match.Groups["audio"].Success && string.IsNullOrEmpty(torrent.Audio))
                 {
-                    Console.WriteLine($"Audio: {match.Groups["audio"].Value}");
                     torrent.Audio = match.Groups["audio"].Value;
                 }
 
                 if (match.Groups["bluray"].Success && string.IsNullOrEmpty(torrent.Bluray))
                 {
-                    Console.WriteLine($"Bluray: {match.Groups["bluray"].Value}");
+                    
                     torrent.Bluray = match.Groups["bluray"].Value;
                 }
 
@@ -68,7 +67,7 @@ namespace HttpRequests
 
                 if (match.Groups["extended"].Success && string.IsNullOrEmpty(torrent.Extended))
                 {
-                    Console.WriteLine($"Version: {match.Groups["extended"].Value}");
+                    
                     torrent.Extended = match.Groups["extended"].Value;
                 }
             }
