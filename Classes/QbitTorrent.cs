@@ -27,14 +27,12 @@ namespace RarbgCLI.Classes
         {
             
             string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string? projectRoot = Directory.GetParent(programDirectory).Parent.Parent.Parent.FullName; //lmao
-            Console.WriteLine(programDirectory);  // For debugging
-            Console.WriteLine(projectRoot);  // For debugging
+            
            
             string? filePath = "config.json";
            
             
-            string fullPath = Path.Combine(projectRoot, filePath);
+            string fullPath = Path.Combine(programDirectory, filePath);
             
                 // Read JSON from a file
                 try
