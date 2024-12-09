@@ -8,7 +8,7 @@ namespace HttpRequests.Classes
 {
     internal class SetEnvVariables
     {
-        public static int SetEnvironmentVariables()
+        public static int SetEnvironmentVariables() //This might change in production
         {
             try
             {
