@@ -18,6 +18,8 @@ class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        var mainTimer = System.Diagnostics.Stopwatch.StartNew();
+        mainTimer.Start();
         var rootCommand = new RootCommand {
       new Argument<string>("name", "The name of the torrent file"),
       new Option<bool>("-tv", "Specify the TV category"),
@@ -78,6 +80,8 @@ class Program
                 List<List<Torrent>> torrentList = new List<List<Torrent>>();
                 int max_selected_pages = (max_pages_arg!=0) ? max_pages_arg : Config.MaxPages;
                 max_pages = Math.Min(max_selected_pages, max_pages);
+                var mainLoopTimer = System.Diagnostics.Stopwatch.StartNew();
+                mainLoopTimer.Start();
                 while (page <= max_pages)
                 {
                     await Task.Delay(1000);
@@ -90,18 +94,42 @@ class Program
                     torrentList.Add(torrents);
                     page++;
                 }
-               
+
+                var mainLoopTime = mainLoopTimer.ElapsedMilliseconds;
+                Console.WriteLine($"Main loop time: {mainLoopTime}");
+                
+                mainLoopTimer.Stop();
+
+                var flatteningTimer = System.Diagnostics.Stopwatch.StartNew();
+                flatteningTimer.Start();
 
                 var allTorrents = torrentList.SelectMany(x => x).ToList();
+
+                var flatteningTime = flatteningTimer.ElapsedMilliseconds;
                 
-                
+                Console.WriteLine($"Flattening time: {flatteningTime}");
+                flatteningTimer.Stop();
+                var sortingTimer = System.Diagnostics.Stopwatch.StartNew();
+                sortingTimer.Start();
                 var sortedList =
                 allTorrents.OrderByDescending(x => x.Seeders).ToList();
+
+               
+                var sortingTime = sortingTimer.ElapsedMilliseconds;
+                
+                Console.WriteLine($"Sorting time: {sortingTime}");
+                sortingTimer.Stop();
+                var regexTimer = System.Diagnostics.Stopwatch.StartNew();
+                regexTimer.Start();
                 foreach (var torrent in sortedList)
                 {
                     UrlHelper.GetUrlInfo(torrent);
                    
                 }
+                var regexTime = regexTimer.ElapsedMilliseconds;
+                
+                Console.WriteLine($"Regex time: {regexTime}");
+                regexTimer.Stop();
                 TorrentHelper.DisplayTorrents(Config.MaxDisplay, sortedList);
                 
               
@@ -140,8 +168,13 @@ class Program
                 return 0;
             });
 
+
         rootCommand.AddCommand(searchCommand);
 
+        var mainTime = mainTimer.ElapsedMilliseconds;
+        Console.WriteLine($"Main Function CLI time: {mainTime}");
+        mainTimer.Stop();
+        
         return await rootCommand.InvokeAsync(args);  // Correct invocation here
     }
 }
