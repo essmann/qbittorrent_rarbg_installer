@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RarbgCLI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95e5fe954291883615f5e0f5d1aad43cb24ceb19")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8bc2bd4600594696eb71454e32bf74151cd67e6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("RarbgCLI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RarbgCLI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
