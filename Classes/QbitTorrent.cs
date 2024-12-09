@@ -23,9 +23,9 @@ namespace RarbgCLI.Classes
 
         private static bool EnvironmentVarChecked = false;
 
-        public static void CheckAndSetEnvironmentVariables()
+        public static void GetCredentialsFromJSON()
         {
-            // Get the path from the environment variable
+            
             string? programDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string? projectRoot = Directory.GetParent(programDirectory).Parent.Parent.Parent.FullName; //lmao
             Console.WriteLine(programDirectory);  // For debugging
@@ -73,7 +73,7 @@ namespace RarbgCLI.Classes
         {
             if (!EnvironmentVarChecked)
             {
-                CheckAndSetEnvironmentVariables();
+                GetCredentialsFromJSON();
                 EnvironmentVarChecked = true;
             }
 
