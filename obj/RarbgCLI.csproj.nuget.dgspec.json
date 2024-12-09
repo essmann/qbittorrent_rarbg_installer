@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\RarbgCLI.csproj": {}
+    "C:\\Users\\Essmann\\source\\repos\\httprequests\\httprequests\\RarbgCLI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\RarbgCLI.csproj": {
+    "C:\\Users\\Essmann\\source\\repos\\httprequests\\httprequests\\RarbgCLI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\RarbgCLI.csproj",
+        "projectUniqueName": "C:\\Users\\Essmann\\source\\repos\\httprequests\\httprequests\\RarbgCLI.csproj",
         "projectName": "RarbgCLI",
-        "projectPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\RarbgCLI.csproj",
+        "projectPath": "C:\\Users\\Essmann\\source\\repos\\httprequests\\httprequests\\RarbgCLI.csproj",
         "packagesPath": "C:\\Users\\Essmann\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Essmann\\source\\repos\\HttpRequests\\HttpRequests\\obj\\",
+        "outputPath": "C:\\Users\\Essmann\\source\\repos\\httprequests\\httprequests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -42,7 +42,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -53,6 +53,12 @@
             "HtmlAgilityPack": {
               "target": "Package",
               "version": "[1.11.71, )"
+            },
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )",
+              "autoReferenced": true
             },
             "System.CommandLine": {
               "target": "Package",
@@ -70,12 +76,31 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }
